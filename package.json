@@ -9,6 +9,9 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "prepare": "husky install",
+    "apply:sql": "tsx prisma/scripts/apply.ts",
+    "apply:functions": "psql $DATABASE_URL -f prisma/scripts/functions.sql",
+    "apply:triggers": "psql $DATABASE_URL -f prisma/scripts/triggers.sql",
     "seed": "ts-node --compiler-options={\\\"module\\\":\\\"commonjs\\\"} prisma/seed.ts"
   },
   "lint-staged": {
