@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📚 Proyecto 4 - Base de Datos 1
 
-## Getting Started
+Sistema completo construido con **Next.js**, **Prisma** y **PostgreSQL**, utilizando buenas prácticas como **Prettier**, **ESLint**, **Husky** y `lint-staged`.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Tecnologías utilizadas
+
+- [Next.js](https://nextjs.org/)
+- [Prisma ORM](https://www.prisma.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Prettier](https://prettier.io/)
+- [ESLint](https://eslint.org/)
+- [Husky](https://typicode.github.io/husky/)
+- [TypeScript](https://www.typescriptlang.org/)
+
+---
+
+## ⚙️ Requisitos previos
+
+- Node.js >= 18.x
+- PostgreSQL instalado y corriendo localmente
+
+---
+
+## 📦 Instalación
+
+1. Clona el repositorio
+
+```
+git clone https://github.com/tu-usuario/proyecto-4-db.git
+cd proyecto-4-db
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Instala las dependencias
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Copia el archivo `.env.example` y renómbralo como `.env`
 
-## Learn More
+```
+cp .env.example .env
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Modifica la variable `DATABASE_URL` en `.env` con tus datos locales de PostgreSQL:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/proyecto4"
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🛠️ Cómo correr el proyecto
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Una vez configurado el entorno, seguí estos pasos para iniciar el servidor de desarrollo y preparar la base de datos:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Iniciá el servidor de desarrollo de Next.js:
+
+```
+npm run dev
+```
+
+El proyecto estará disponible en:
+
+```
+http://localhost:3000
+```
+
+---
+
+## 📤 Créditos
+
+Proyecto desarrollado por el grupo de la Universidad del Valle de Guatemala para el curso **cc3088 - Bases de Datos 1 (Ciclo 1, 2025)**.
