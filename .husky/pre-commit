@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+
 echo "✅ Husky está funcionando "
 echo "husky - pre-commit (node v$(node -v))"
 npx lint-staged
