@@ -394,7 +394,7 @@ model VistaCursos {
   creditos  Int
   categoria CursoCategoria
   precio    Decimal   @db.Decimal(10, 2)
-  secciones Json
+  secciones Json?
 
   @@map("vista_cursos")
 }
