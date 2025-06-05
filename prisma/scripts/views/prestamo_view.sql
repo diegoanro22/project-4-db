@@ -21,4 +21,4 @@ JOIN items i ON p.item_id = i.id
 LEFT JOIN libros l ON i.id = l.item_id
 LEFT JOIN autores a ON l.autor_id = a.id
 LEFT JOIN dispositivos d ON i.id = d.item_id
-JOIN estudiantes e ON p.id = e.id;
+JOIN estudiantes e ON p.estudiante_id = e.id;
