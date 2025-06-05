@@ -45,6 +45,7 @@ export async function DELETE(
   const id = Number(params.id);
 
   await prisma.$transaction([
+    prisma.prestamos.deleteMany({ where: { estudiante_id: id } }),
     prisma.estudianteNotas.deleteMany({ where: { estudiante_id: id } }),
     prisma.estudianteSecciones.deleteMany({ where: { estudiante_id: id } }),
     prisma.estudiantePagos.deleteMany({ where: { estudiante_id: id } }),
