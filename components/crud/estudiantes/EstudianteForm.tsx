@@ -92,7 +92,7 @@ export default function EstudianteForm({
   }
 
   return (
-    <form className="space-y-4" onSubmit={void handleSubmit}>
+    <form className="space-y-4" onSubmit={(e) => void handleSubmit(e)}>
       {/* Grid de 2 columnas */}
       <div className="grid grid-cols-2 gap-4">
         <input
