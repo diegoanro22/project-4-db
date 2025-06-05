@@ -94,6 +94,7 @@ model Estudiantes {
   pagos                 EstudiantePagos[]
   horas_beca            EstudianteHorasBeca[]
   reservas              Reservas[]
+  prestamos  Prestamos[]
 
   @@map("estudiantes")
 }
@@ -351,12 +352,14 @@ model Dispositivos {
 model Prestamos {
   id                Int            @id @default(autoincrement())
   item_id           Int
+  estudiante_id     Int
   estado            PrestamoEstado
   fecha_prestamo    DateTime       @default(now()) @db.Date
   fecha_devolucion  DateTime?      @db.Date
 
   // Relaciones
   item Items @relation(fields: [item_id], references: [id])
+  estudiante  Estudiantes  @relation(fields: [estudiante_id],  references: [id])
 
   @@map("prestamos")
 }
