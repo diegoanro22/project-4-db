@@ -1,8 +1,8 @@
-// components/crud/EstudiantesTable.tsx
 'use client';
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Eye, Edit2, Trash2 } from 'lucide-react';
 
 /* ----------  Tipo de datos de la vista ---------- */
 export interface EstudianteView {
@@ -26,13 +26,11 @@ interface Props {
 }
 
 export default function EstudiantesTable({ data }: Props) {
-  /* ───────────  paginación básica  ─────────── */
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const totalPages = Math.ceil(data.length / perPage);
   const slice = data.slice((page - 1) * perPage, page * perPage);
 
-  /*  botones 1 2 … lógica idéntica a las otras tablas  */
   const pages = useMemo<(number | '…')[]>(() => {
     if (totalPages <= 7)
       return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -49,7 +47,6 @@ export default function EstudiantesTable({ data }: Props) {
     return arr;
   }, [page, totalPages]);
 
-  /* ───────────  eliminar  ─────────── */
   const router = useRouter();
 
   async function handleDelete(id: number, nombre: string) {
@@ -65,16 +62,14 @@ export default function EstudiantesTable({ data }: Props) {
     router.refresh();
   }
 
-  /* ───────────  render  ─────────── */
   return (
-    <div>
-      {/* tabla con scroll horizontal */}
-      <div className="overflow-auto">
-        <table className="w-full border-collapse text-sm">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              {/* cabeceras compactas */}
+    <div className="overflow-hidden rounded-lg bg-white shadow-lg">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
               {[
+                'Acciones',
                 'ID',
                 'Carnet',
                 'Nombre',
@@ -88,27 +83,49 @@ export default function EstudiantesTable({ data }: Props) {
                 'Horas',
                 'Cursos',
                 'Préstamos',
-                'Acciones',
               ].map((h) => (
-                <th key={h} className="border px-3 py-2">
+                <th
+                  key={h}
+                  className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase"
+                >
                   {h}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200 bg-white">
             {slice.map((e) => (
               <tr key={e.id} className="hover:bg-gray-50">
-                <td className="border px-3 py-1">{e.id}</td>
-                <td className="border px-3 py-1">{e.carnet}</td>
-                <td className="border px-3 py-1">{e.nombre_completo}</td>
-                <td className="border px-3 py-1">{e.email}</td>
-                <td className="border px-3 py-1">{e.telefono}</td>
+                <td className="px-4 py-2">
+                  <div className="flex items-center gap-2">
+                    <Link href={`/crud/estudiantes/${e.id}`}>
+                      <button className="rounded p-1 hover:bg-gray-100">
+                        <Eye className="h-5 w-5 text-blue-500" />
+                      </button>
+                    </Link>
+                    <Link href={`/crud/estudiantes/${e.id}/edit`}>
+                      <button className="rounded p-1 hover:bg-gray-100">
+                        <Edit2 className="h-5 w-5 text-green-500" />
+                      </button>
+                    </Link>
+                    <button
+                      onClick={() => void handleDelete(e.id, e.nombre_completo)}
+                      className="rounded p-1 hover:bg-gray-100"
+                    >
+                      <Trash2 className="h-5 w-5 text-red-500" />
+                    </button>
+                  </div>
+                </td>
 
-                {/* chip verde / gris */}
-                <td className="border px-3 py-1">
+                <td className="px-4 py-2 text-gray-600">{e.id}</td>
+                <td className="px-4 py-2 text-gray-600">{e.carnet}</td>
+                <td className="px-4 py-2 text-gray-600">{e.nombre_completo}</td>
+                <td className="px-4 py-2 text-gray-600">{e.email}</td>
+                <td className="px-4 py-2 text-gray-600">{e.telefono}</td>
+
+                <td className="px-4 py-2">
                   <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                    className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${
                       e.matriculado
                         ? 'bg-emerald-100 text-emerald-700'
                         : 'bg-gray-200 text-gray-600'
@@ -118,42 +135,20 @@ export default function EstudiantesTable({ data }: Props) {
                   </span>
                 </td>
 
-                <td className="border px-3 py-1">{e.carrera}</td>
-                <td className="border px-3 py-1">{e.facultad}</td>
-                <td className="border px-3 py-1">{e.beca ?? '—'}</td>
-                <td className="border px-3 py-1">
+                <td className="px-4 py-2 text-gray-600">{e.carrera}</td>
+                <td className="px-4 py-2 text-gray-600">{e.facultad}</td>
+                <td className="px-4 py-2 text-gray-600">{e.beca ?? '—'}</td>
+                <td className="px-4 py-2 text-gray-600">
                   {e.promedio_notas?.toFixed(2) ?? '—'}
                 </td>
-                <td className="border px-3 py-1">
+                <td className="px-4 py-2 text-gray-600">
                   {e.horas_beca_restantes ?? '—'}
                 </td>
-                <td className="border px-3 py-1">{e.cursos?.length ?? '—'}</td>
-                <td className="border px-3 py-1">
-                  {e.prestamos_activos?.length ?? '—'}
+                <td className="px-4 py-2 text-gray-600">
+                  {e.cursos?.length ?? '—'}
                 </td>
-
-                {/* acciones compactas */}
-                <td className="border px-3 py-1">
-                  <div className="flex gap-2">
-                    <Link
-                      href={`/crud/estudiantes/${e.id}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Ver
-                    </Link>
-                    <Link
-                      href={`/crud/estudiantes/${e.id}/edit`}
-                      className="text-green-600 hover:underline"
-                    >
-                      Editar
-                    </Link>
-                    <button
-                      onClick={() => void handleDelete(e.id, e.nombre_completo)}
-                      className="text-red-600 hover:underline"
-                    >
-                      Eliminar
-                    </button>
-                  </div>
+                <td className="px-4 py-2 text-gray-600">
+                  {e.prestamos_activos?.length ?? '—'}
                 </td>
               </tr>
             ))}
@@ -162,7 +157,7 @@ export default function EstudiantesTable({ data }: Props) {
               <tr>
                 <td
                   colSpan={14}
-                  className="border py-6 text-center text-gray-500"
+                  className="px-4 py-6 text-center text-gray-500"
                 >
                   No hay estudiantes registrados.
                 </td>
@@ -172,10 +167,9 @@ export default function EstudiantesTable({ data }: Props) {
         </table>
       </div>
 
-      {/* controles de paginación */}
-      <div className="mt-4 flex items-center justify-between">
+      <div className="flex items-center justify-between bg-gray-50 px-4 py-3">
         <select
-          className="rounded border px-2 py-1"
+          className="block w-24 rounded border-gray-300 bg-white text-sm"
           value={perPage}
           onChange={(e) => {
             setPerPage(Number(e.target.value));
@@ -184,7 +178,7 @@ export default function EstudiantesTable({ data }: Props) {
         >
           {[5, 10, 20, 50].map((n) => (
             <option key={n} value={n}>
-              {n} / página
+              {n} / pág
             </option>
           ))}
         </select>
@@ -193,11 +187,7 @@ export default function EstudiantesTable({ data }: Props) {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className={`rounded border px-3 py-1 ${
-              page === 1
-                ? 'bg-gray-200 text-gray-500'
-                : 'bg-white hover:bg-gray-100'
-            }`}
+            className="rounded border px-2 py-1 text-sm disabled:opacity-50"
           >
             ‹
           </button>
@@ -211,11 +201,7 @@ export default function EstudiantesTable({ data }: Props) {
               <button
                 key={p}
                 onClick={() => setPage(p as number)}
-                className={`rounded border px-3 py-1 ${
-                  p === page
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white hover:bg-gray-100'
-                }`}
+                className={`rounded px-3 py-1 text-sm ${p === page ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'}`}
               >
                 {p}
               </button>
@@ -225,11 +211,7 @@ export default function EstudiantesTable({ data }: Props) {
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className={`rounded border px-3 py-1 ${
-              page === totalPages
-                ? 'bg-gray-200 text-gray-500'
-                : 'bg-white hover:bg-gray-100'
-            }`}
+            className="rounded border px-2 py-1 text-sm disabled:opacity-50"
           >
             ›
           </button>

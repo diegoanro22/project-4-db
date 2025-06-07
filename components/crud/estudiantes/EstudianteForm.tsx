@@ -6,19 +6,18 @@ export interface CatalogoItem {
   id: number;
   nombre: string;
 }
-
 export interface EstudianteFormProps {
   mode: 'create' | 'edit';
-  id?: number; // solo en edit
+  id?: number;
   carreras: CatalogoItem[];
-  becas: CatalogoItem[]; // puede venir vacío
+  becas: CatalogoItem[];
   initial?: {
     carnet: string;
     nombre: string;
     apellido: string;
     email: string;
     telefono: string;
-    fecha_nacimiento: string; // YYYY-MM-DD
+    fecha_nacimiento: string;
     carrera_id: number;
     beca_id: number | null;
     matriculado: boolean;
@@ -34,7 +33,6 @@ export default function EstudianteForm({
   initial,
 }: EstudianteFormProps) {
   const router = useRouter();
-
   const [form, setForm] = useState(
     initial ?? {
       carnet: '',
@@ -54,32 +52,18 @@ export default function EstudianteForm({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const target = e.target;
-    const name = target.name;
-    const value = target.value;
-
-    // si es un input checkbox, tomo .checked, si no tomo .value
-    const newValue =
-      target instanceof HTMLInputElement && target.type === 'checkbox'
-        ? target.checked
-        : value;
-
-    setForm((f) => ({
-      ...f,
-      [name]: newValue,
-    }));
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+    setForm((f) => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
   };
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-
     const url =
       mode === 'create'
         ? '/api/crud/estudiantes'
         : `/api/crud/estudiantes/${id}`;
     const method = mode === 'create' ? 'POST' : 'PUT';
-
     const res = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
@@ -90,116 +74,142 @@ export default function EstudianteForm({
         horas_beca_restantes: Number(form.horas_beca_restantes),
       }),
     });
-
     if (res.ok) {
       router.push('/crud/estudiantes');
       router.refresh();
-    } else {
-      alert('Error al guardar');
-    }
+    } else alert('Error al guardar');
     setLoading(false);
   }
 
   return (
-    <form className="space-y-4" onSubmit={(e) => void handleSubmit(e)}>
-      {/* Grid de 2 columnas */}
-      <div className="grid grid-cols-2 gap-4">
-        <input
-          name="carnet"
-          placeholder="Carnet"
-          value={form.carnet}
-          onChange={handleChange}
-          required
-          className="rounded border p-2"
-        />
-        <input
-          name="nombre"
-          placeholder="Nombre"
-          value={form.nombre}
-          onChange={handleChange}
-          required
-          className="rounded border p-2"
-        />
-        <input
-          name="apellido"
-          placeholder="Apellido"
-          value={form.apellido}
-          onChange={handleChange}
-          required
-          className="rounded border p-2"
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-          className="rounded border p-2"
-        />
-        <input
-          name="telefono"
-          placeholder="Teléfono"
-          value={form.telefono}
-          onChange={handleChange}
-          className="rounded border p-2"
-        />
-        <input
-          type="date"
-          name="fecha_nacimiento"
-          value={form.fecha_nacimiento}
-          onChange={handleChange}
-          className="rounded border p-2"
-        />
-
-        {/* Select carrera */}
-        <select
-          name="carrera_id"
-          value={form.carrera_id}
-          onChange={handleChange}
-          className="col-span-2 rounded border p-2"
-        >
-          {carreras.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.nombre}
-            </option>
-          ))}
-        </select>
-
-        {/* Select beca */}
-        <select
-          name="beca_id"
-          value={form.beca_id ?? ''}
-          onChange={handleChange}
-          className="col-span-2 rounded border p-2"
-        >
-          <option value="">Sin beca</option>
-          {becas.map((b) => (
-            <option key={b.id} value={b.id}>
-              {b.nombre}
-            </option>
-          ))}
-        </select>
-
-        {/* Matriculado + Horas beca */}
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="matriculado"
-            checked={form.matriculado}
-            onChange={handleChange}
-          />
-          <span>Matriculado</span>
-        </label>
+    <form
+      onSubmit={(e) => void handleSubmit(e)}
+      className="space-y-6 rounded-lg bg-gray-50 p-6 shadow-md"
+    >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {[
+          { name: 'carnet', label: 'Carnet', type: 'text' },
+          { name: 'nombre', label: 'Nombre', type: 'text' },
+          { name: 'apellido', label: 'Apellido', type: 'text' },
+          { name: 'email', label: 'Email', type: 'email' },
+          { name: 'telefono', label: 'Teléfono', type: 'text' },
+          {
+            name: 'fecha_nacimiento',
+            label: 'Fecha de Nacimiento',
+            type: 'date',
+          },
+        ].map((field) => (
+          <div key={field.name} className="flex flex-col">
+            <label
+              htmlFor={field.name}
+              className="mb-1 text-sm font-medium text-gray-700"
+            >
+              {field.label}
+            </label>
+            <input
+              id={field.name}
+              name={field.name}
+              type={field.type}
+              value={form[field.name as keyof typeof form] as string}
+              onChange={handleChange}
+              required={['carnet', 'nombre', 'apellido', 'email'].includes(
+                field.name,
+              )}
+              className="rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+        ))}
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
-      >
-        {loading ? 'Guardando…' : mode === 'create' ? 'Crear' : 'Actualizar'}
-      </button>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex flex-col">
+          <label
+            htmlFor="carrera_id"
+            className="mb-1 text-sm font-medium text-gray-700"
+          >
+            Carrera
+          </label>
+          <select
+            id="carrera_id"
+            name="carrera_id"
+            value={form.carrera_id}
+            onChange={handleChange}
+            className="rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+          >
+            {carreras.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col">
+          <label
+            htmlFor="beca_id"
+            className="mb-1 text-sm font-medium text-gray-700"
+          >
+            Beca
+          </label>
+          <select
+            id="beca_id"
+            name="beca_id"
+            value={form.beca_id ?? ''}
+            onChange={handleChange}
+            className="rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="">Sin beca</option>
+            {becas.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-center space-x-2">
+          <input
+            id="matriculado"
+            name="matriculado"
+            type="checkbox"
+            checked={form.matriculado}
+            onChange={handleChange}
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <label htmlFor="matriculado" className="text-sm text-gray-700">
+            Matriculado
+          </label>
+        </div>
+        <div className="flex flex-col">
+          <label
+            htmlFor="horas_beca_restantes"
+            className="mb-1 text-sm font-medium text-gray-700"
+          >
+            Horas de Beca
+          </label>
+          <input
+            id="horas_beca_restantes"
+            name="horas_beca_restantes"
+            type="number"
+            value={form.horas_beca_restantes}
+            onChange={handleChange}
+            min={0}
+            className="rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={loading}
+          className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          {loading
+            ? 'Guardando...'
+            : mode === 'create'
+              ? 'Crear'
+              : 'Actualizar'}
+        </button>
+      </div>
     </form>
   );
 }

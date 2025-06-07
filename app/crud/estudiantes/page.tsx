@@ -1,4 +1,3 @@
-// app/crud/estudiantes/page.tsx
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import EstudiantesTable, {
@@ -32,23 +31,40 @@ export default async function EstudiantesIndex() {
   }));
 
   return (
-    <div className="min-h-screen bg-gray-200 py-10">
-      <div className="mx-auto max-w-7xl rounded-lg bg-gray-100 p-8 shadow-lg">
-        <h1 className="mb-6 text-3xl font-bold">Listado de Estudiantes</h1>
-
-        {/* (3) Envolvemos la tabla en un contenedor con overflow */}
-        <EstudiantesTable data={estudiantes} />
-
-        {/* Botón para crear estudiante nuevo */}
-        <div className="mt-6">
-          <Link
-            href="/crud/estudiantes/create"
-            className="inline-block rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700"
-          >
-            + Nuevo Estudiante
-          </Link>
+    <div className="flex min-h-screen flex-col bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-6 py-6">
+          <h1 className="text-2xl font-semibold text-gray-800">Estudiantes</h1>
         </div>
-      </div>
+      </header>
+
+      {/* Content */}
+      <main className="mx-auto max-w-7xl flex-grow px-6 py-8">
+        <div className="rounded-lg bg-white p-6 shadow">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-medium text-gray-700">
+              Listado de Estudiantes
+            </h2>
+            <Link
+              href="/crud/estudiantes/create"
+              className="inline-flex items-center gap-1 rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              + Nuevo Estudiante
+            </Link>
+          </div>
+          <div className="overflow-auto">
+            <EstudiantesTable data={estudiantes} />
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-4 text-center text-sm text-gray-500">
+          &copy; {new Date().getFullYear()} CC3088.
+        </div>
+      </footer>
     </div>
   );
 }
