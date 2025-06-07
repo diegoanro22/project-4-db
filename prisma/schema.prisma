@@ -12,3 +12,427 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+
+// Tipos personalizados
+enum CursoCategoria {
+  BASICO
+  INTERMEDIO
+  AVANZADO
+  ESPECIALIZADO
+}
+
+enum CursoEstado {
+  INSCRITO
+  CURSANDO
+  APROBADO
+  REPROBADO
+  RETIRADO
+}
+
+enum TipoPago {
+  EFECTIVO
+  TARJETA
+  TRANSFERENCIA
+  BECA
+}
+
+enum Dia {
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+  SABADO
+  DOMINGO
+}
+
+enum TipoActividad {
+  EXAMEN
+  TAREA
+  PROYECTO
+  LABORATORIO
+  PRESENTACION
+}
+
+enum HorasBecaEstado {
+  PENDIENTE
+  COMPLETADO
+  CANCELADO
+}
+
+enum PrestamoEstado {
+  ACTIVO
+  DEVUELTO
+  VENCIDO
+  PERDIDO
+}
+
+// Modelos principales
+model Estudiantes {
+  id                    Int      @id @default(autoincrement())
+  carnet                String   @unique @db.VarChar(50)
+  carrera_id            Int
+  beca_id               Int?
+  nombre                String   @db.VarChar(100)
+  apellido              String   @db.VarChar(100)
+  email                 String   @unique @db.VarChar(200)
+  fecha_nacimiento      DateTime
+  matriculado           Boolean  @default(false)
+  telefono              String   @unique @db.VarChar(20)
+  horas_beca_restantes  Int      @default(0)
+  creado_en             DateTime @default(now())
+  actualizado_en        DateTime @updatedAt
+
+  // Relaciones
+  carrera               Carreras                @relation(fields: [carrera_id], references: [id])
+  beca                  Becas?                  @relation(fields: [beca_id], references: [id])
+  notas                 EstudianteNotas[]
+  contactos             EstudianteContactos[]
+  secciones             EstudianteSecciones[]
+  pagos                 EstudiantePagos[]
+  horas_beca            EstudianteHorasBeca[]
+  reservas              Reservas[]
+  prestamos  Prestamos[]
+
+  @@map("estudiantes")
+}
+
+model Maestros {
+  id             Int      @id @default(autoincrement())
+  nombre         String   @db.VarChar(100)
+  apellido       String   @db.VarChar(100)
+  email          String   @unique @db.VarChar(200)
+  telefono       String   @unique @db.VarChar(20)
+  creado_en      DateTime @default(now())
+  actualizado_en DateTime @updatedAt
+
+  // Relaciones
+  secciones Secciones[]
+
+  @@map("maestros")
+}
+
+model Facultades {
+  id       Int    @id @default(autoincrement())
+  facultad String @db.VarChar(200)
+
+  // Relaciones
+  carreras Carreras[]
+
+  @@map("facultades")
+}
+
+model Carreras {
+  id          Int    @id @default(autoincrement())
+  facultad_id Int
+  carrera     String @db.VarChar(200)
+  descripcion String @db.Text
+
+  // Relaciones
+  facultad    Facultades    @relation(fields: [facultad_id], references: [id])
+  estudiantes Estudiantes[]
+
+  @@map("carreras")
+}
+
+model Becas {
+  id         Int    @id @default(autoincrement())
+  nombre     String @db.VarChar(100)
+  porcentaje Int    @db.SmallInt
+
+  // Relaciones
+  estudiantes Estudiantes[]
+
+  @@map("becas")
+}
+
+model Cursos {
+  id             Int             @id @default(autoincrement())
+  curso          String          @db.VarChar(200)
+  descripcion    String          @db.Text
+  creditos       Int
+  categoria      CursoCategoria
+  precio         Decimal         @db.Decimal(10, 2)
+  creado_en      DateTime        @default(now())
+  actualizado_en DateTime        @updatedAt
+
+  // Relaciones
+  secciones Secciones[]
+
+  @@map("cursos")
+}
+
+model Secciones {
+  id         Int @id @default(autoincrement())
+  maestro_id Int
+  curso_id   Int
+  salon_id   Int
+
+  // Relaciones
+  maestro            Maestros              @relation(fields: [maestro_id], references: [id])
+  curso              Cursos                @relation(fields: [curso_id], references: [id])
+  salon              Salones               @relation(fields: [salon_id], references: [id])
+  estudiantes        EstudianteSecciones[]
+  horarios           Horarios[]
+  actividades        Actividades[]
+
+  @@unique([maestro_id, curso_id])
+  @@map("secciones")
+}
+
+model Salones {
+  id        Int    @id @default(autoincrement())
+  salon     String @db.VarChar(100)
+  capacidad Int
+
+  // Relaciones
+  secciones Secciones[]
+
+  @@map("salones")
+}
+
+model EstudianteSecciones {
+  id            Int         @id @default(autoincrement())
+  estudiante_id Int
+  seccion_id    Int
+  estado        CursoEstado
+
+  // Relaciones
+  estudiante Estudiantes @relation(fields: [estudiante_id], references: [id])
+  seccion    Secciones   @relation(fields: [seccion_id], references: [id])
+
+  @@unique([estudiante_id, seccion_id])
+  @@map("estudiante_secciones")
+}
+
+model EstudianteContactos {
+  id            Int    @id @default(autoincrement())
+  estudiante_id Int
+  nombre        String @db.VarChar(100)
+  contacto      String @db.VarChar(200)
+
+  // Relaciones
+  estudiante Estudiantes @relation(fields: [estudiante_id], references: [id])
+
+  @@map("estudiante_contactos")
+}
+
+model EstudiantePagos {
+  id            Int      @id @default(autoincrement())
+  estudiante_id Int
+  tipo_pago     TipoPago
+  fecha         DateTime @default(now()) @db.Date
+
+  // Relaciones
+  estudiante Estudiantes @relation(fields: [estudiante_id], references: [id])
+
+  @@map("estudiante_pagos")
+}
+
+model Horarios {
+  id           Int      @id @default(autoincrement())
+  seccion_id   Int
+  dia          Dia
+  hora_inicio  DateTime @db.Time
+  hora_fin     DateTime @db.Time
+
+  // Relaciones
+  seccion Secciones @relation(fields: [seccion_id], references: [id])
+
+  @@map("horarios")
+}
+
+model Actividades {
+  id              Int           @id @default(autoincrement())
+  seccion_id      Int
+  descripcion     String        @db.Text
+  nota_actividad  Decimal       @db.Decimal(10, 2)
+  tipo_actividad  TipoActividad
+
+  // Relaciones
+  seccion Secciones         @relation(fields: [seccion_id], references: [id])
+  notas   EstudianteNotas[]
+
+  @@map("actividades")
+}
+
+model EstudianteNotas {
+  id            Int     @id @default(autoincrement())
+  estudiante_id Int
+  actividad_id  Int
+  nota          Decimal @db.Decimal(10, 2)
+
+  // Relaciones
+  estudiante Estudiantes @relation(fields: [estudiante_id], references: [id])
+  actividad  Actividades @relation(fields: [actividad_id], references: [id])
+
+  @@unique([estudiante_id, actividad_id])
+  @@map("estudiante_notas")
+}
+
+model HorasBeca {
+  id            Int      @id @default(autoincrement())
+  actividad     String   @db.VarChar(200)
+  cantidad_horas Int
+  dia           Dia
+  hora_inicio   DateTime @db.Time
+  hora_fin      DateTime @db.Time
+
+  // Relaciones
+  estudiantes EstudianteHorasBeca[]
+
+  @@map("horas_beca")
+}
+
+model EstudianteHorasBeca {
+  id            Int             @id @default(autoincrement())
+  estudiante_id Int
+  hora_beca_id  Int
+  estado        HorasBecaEstado
+
+  // Relaciones
+  estudiante Estudiantes @relation(fields: [estudiante_id], references: [id])
+  hora_beca  HorasBeca   @relation(fields: [hora_beca_id], references: [id])
+
+  @@map("estudiante_horas_beca")
+}
+
+// Sistema de biblioteca
+model Items {
+  id         Int     @id @default(autoincrement())
+  item       String  @db.VarChar(200)
+  disponible Boolean @default(true)
+  cantidad   Int
+
+  // Relaciones
+  libros       Libros[]
+  dispositivos Dispositivos[]
+  prestamos    Prestamos[]
+
+  @@map("items")
+}
+
+model Autores {
+  id    Int    @id @default(autoincrement())
+  autor String @db.VarChar(200)
+
+  // Relaciones
+  libros Libros[]
+
+  @@map("autores")
+}
+
+model Libros {
+  id       Int    @id @default(autoincrement())
+  item_id  Int
+  nombre   String @db.VarChar(200)
+  autor_id Int
+  año      Int
+
+  // Relaciones
+  item  Items   @relation(fields: [item_id], references: [id])
+  autor Autores @relation(fields: [autor_id], references: [id])
+
+  @@map("libros")
+}
+
+model Dispositivos {
+  id          Int    @id @default(autoincrement())
+  item_id     Int
+  dispositivo String @db.VarChar(200)
+
+  // Relaciones
+  item Items @relation(fields: [item_id], references: [id])
+
+  @@map("dispositivos")
+}
+
+model Prestamos {
+  id                Int            @id @default(autoincrement())
+  item_id           Int
+  estudiante_id     Int
+  estado            PrestamoEstado
+  fecha_prestamo    DateTime       @default(now()) @db.Date
+  fecha_devolucion  DateTime?      @db.Date
+
+  // Relaciones
+  item Items @relation(fields: [item_id], references: [id])
+  estudiante  Estudiantes  @relation(fields: [estudiante_id],  references: [id])
+
+  @@map("prestamos")
+}
+
+model SalonesBiblioteca {
+  id        Int    @id @default(autoincrement())
+  salon     String @db.VarChar(100)
+  capacidad Int
+
+  // Relaciones
+  reservas Reservas[]
+
+  @@map("salones_biblioteca")
+}
+
+model Reservas {
+  id                    Int      @id @default(autoincrement())
+  salon_biblioteca_id   Int
+  estudiante_id         Int
+  fecha                 DateTime @db.Date
+  hora_inicio           DateTime @db.Time
+  hora_fin              DateTime @db.Time
+
+  // Relaciones
+  salon_biblioteca SalonesBiblioteca @relation(fields: [salon_biblioteca_id], references: [id])
+  estudiante       Estudiantes       @relation(fields: [estudiante_id], references: [id])
+
+  @@map("reservas")
+}
+
+model VistaCursos {
+  id        Int       @id
+  curso     String
+  descripcion String
+  creditos  Int
+  categoria CursoCategoria
+  precio    Decimal   @db.Decimal(10, 2)
+  secciones Json?
+
+  @@map("vista_cursos")
+}
+
+model VistaEstudiantes {
+  id                    Int       @id
+  carnet                String
+  nombre_completo       String
+  email                 String
+  telefono              String
+  matriculado           Boolean
+  carrera               String
+  facultad              String
+  beca                  String?
+  promedio_notas        Decimal?
+  horas_beca_restantes  Int?
+  cursos                Json?
+  prestamos_activos     Json?
+
+  @@map("vista_estudiantes")
+}
+
+model VistaPrestamos {
+  id                Int      @id
+  estado            PrestamoEstado
+  fecha_prestamo    DateTime @db.Date
+  fecha_devolucion  DateTime?
+  item              String
+  tipo_item         String
+  libro             String?
+  autor_libro       String?
+  año_publicacion   Int?
+  dispositivo       String?
+  estudiante        String
+  carnet            String
+
+  @@map("vista_prestamos")
+}
