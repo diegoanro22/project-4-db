@@ -54,10 +54,19 @@ export default function EstudianteForm({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value, type, checked } = e.target;
+    const target = e.target;
+    const name = target.name;
+    const value = target.value;
+
+    // si es un input checkbox, tomo .checked, si no tomo .value
+    const newValue =
+      target instanceof HTMLInputElement && target.type === 'checkbox'
+        ? target.checked
+        : value;
+
     setForm((f) => ({
       ...f,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: newValue,
     }));
   };
 
