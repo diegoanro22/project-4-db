@@ -71,7 +71,7 @@ npx prisma migrate deploy
 3. Aplicar funciones, triggers y vistas
 
 ```
-npm run db:apply
+npm run apply:sql
 ```
 
 4. Cargar datos de ejemplo
