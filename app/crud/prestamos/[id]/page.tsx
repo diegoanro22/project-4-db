@@ -7,12 +7,12 @@ export default async function ShowPrestamo({
 }: {
   params: { id: string };
 }) {
-  const p = await prisma.vistaPrestamos.findUnique({
+  const p = await prisma.vista_prestamos.findUnique({
     where: { id: Number(params.id) },
   });
   if (!p) return notFound();
 
-  const fechaPrestamo = p.fecha_prestamo.toISOString().slice(0, 10);
+  const fechaPrestamo = p.fecha_prestamo?.toISOString().slice(0, 10);
   const fechaDevolucion = p.fecha_devolucion
     ? p.fecha_devolucion.toISOString().slice(0, 10)
     : '—';
@@ -45,9 +45,6 @@ export default async function ShowPrestamo({
             </li>
             <li>
               <b>Autor:</b> {p.autor_libro}
-            </li>
-            <li>
-              <b>Año publicación:</b> {p.año_publicacion}
             </li>
           </>
         )}

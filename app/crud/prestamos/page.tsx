@@ -6,22 +6,21 @@ import PrestamosTable, {
 
 export default async function PrestamosIndex() {
   /* 1) Leemos la vista */
-  const raw = await prisma.vistaPrestamos.findMany({ orderBy: { id: 'asc' } });
+  const raw = await prisma.vista_prestamos.findMany({ orderBy: { id: 'asc' } });
 
   /* 2) Mapeamos a tipo “plano” (sin any)  */
   const data: PrestamoView[] = raw.map((r) => ({
     id: r.id,
     estado: r.estado,
-    fecha_prestamo: r.fecha_prestamo.toISOString().slice(0, 10),
+    fecha_prestamo: r.fecha_prestamo?.toISOString().slice(0, 10),
     fecha_devolucion: r.fecha_devolucion
       ? r.fecha_devolucion.toISOString().slice(0, 10)
       : null,
     item: r.item,
     tipo_item: r.tipo_item,
-    libro: r.libro,
-    autor_libro: r.autor_libro,
-    año_publicacion: r.año_publicacion,
-    dispositivo: r.dispositivo,
+    libro: r.libro ?? '—',
+    autor_libro: r.autor_libro ?? '—',
+    dispositivo: r.dispositivo ?? '—',
     estudiante: r.estudiante,
     carnet: r.carnet,
   }));
