@@ -237,6 +237,7 @@ CREATE TABLE "dispositivos" (
 CREATE TABLE "prestamos" (
     "id" SERIAL NOT NULL,
     "item_id" INTEGER NOT NULL,
+    "estudiante_id" INTEGER NOT NULL,
     "estado" "PrestamoEstado" NOT NULL,
     "fecha_prestamo" DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "fecha_devolucion" DATE,
@@ -348,6 +349,9 @@ ALTER TABLE "dispositivos" ADD CONSTRAINT "dispositivos_item_id_fkey" FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE "prestamos" ADD CONSTRAINT "prestamos_item_id_fkey" FOREIGN KEY ("item_id") REFERENCES "items"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "prestamos" ADD CONSTRAINT "prestamos_estudiante_id_fkey" FOREIGN KEY ("estudiante_id") REFERENCES "estudiantes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "reservas" ADD CONSTRAINT "reservas_salon_biblioteca_id_fkey" FOREIGN KEY ("salon_biblioteca_id") REFERENCES "salones_biblioteca"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -441,25 +441,59 @@ async function main() {
   console.log('Creando reservas...');
   for (let i = 1; i <= 100; i++) {
     const salonId = (i % 5) + 1;
-    const horaInicio = 8 + (i % 8); // Hora entre 8 y 15
-    const horaFin = horaInicio + 2; // Duración de 2 horas
+    const horaInicio = 8 + (i % 8);
+    const horaFin = horaInicio + 2;
 
+    // Fecha base: solo la parte de día importa, hora la pisamos después
     const fechaReserva = new Date();
     fechaReserva.setDate(
       fechaReserva.getDate() + faker.number.int({ min: 1, max: 30 }),
     );
+    fechaReserva.setHours(0, 0, 0, 0);
 
-    await prisma.reservas.create({
-      data: {
+    const inicio = new Date(fechaReserva);
+    inicio.setHours(horaInicio, 0, 0, 0);
+    const fin = new Date(fechaReserva);
+    fin.setHours(horaFin, 0, 0, 0);
+
+    // Chequeo (opcional
+    const choque = await prisma.reservas.findFirst({
+      where: {
         salon_biblioteca_id: salonId,
-        estudiante_id: (i % 200) + 1,
         fecha: fechaReserva,
-        hora_inicio: new Date(fechaReserva.setHours(horaInicio, 0, 0, 0)),
-        hora_fin: new Date(fechaReserva.setHours(horaFin, 0, 0, 0)),
+        OR: [
+          { hora_inicio: { lte: inicio }, hora_fin: { gt: inicio } },
+          { hora_inicio: { lt: fin }, hora_fin: { gte: fin } },
+          { hora_inicio: { gte: inicio }, hora_fin: { lte: fin } },
+        ],
       },
     });
+    if (choque) {
+      console.log(
+        `⚠️  Choque detectado (antes del create), saltando reserva ${i}`,
+      );
+      continue;
+    }
 
-    console.log('✅ Seeding completado con éxito!');
+    // Intentamos crearla y atrapamos el error del trigger
+    try {
+      await prisma.reservas.create({
+        data: {
+          salon_biblioteca_id: salonId,
+          estudiante_id: (i % 200) + 1,
+          fecha: fechaReserva,
+          hora_inicio: inicio,
+          hora_fin: fin,
+        },
+      });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : '';
+      if (msg.includes('El salón ya está reservado en ese horario')) {
+        console.log(`⏭️ Choque detectado por trigger, salto reserva ${i}.`);
+        continue;
+      }
+      throw e; // si es otro error, lo relanzamos
+    }
   }
 }
 

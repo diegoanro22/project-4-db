@@ -6,7 +6,7 @@ import fs from 'fs';
 const prisma = new PrismaClient();
 
 async function applySqlFile(filePath: string) {
-  const command = `psql ${process.env.DATABASE_URL} -f ${filePath}`;
+  const command = `psql -d ${process.env.DATABASE_URL} -f ${filePath}`;
 
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
