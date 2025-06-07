@@ -7,27 +7,28 @@ import EstudiantesTable, {
 
 export default async function EstudiantesIndex() {
   // (1) Traer los datos “crudos” de la vista
-  const estudiantesRaw = await prisma.vistaEstudiantes.findMany({
+  const estudiantesRaw = await prisma.vista_estudiantes.findMany({
     orderBy: { id: 'asc' },
   });
 
   // (2) Mapear a “objetos planos” con todos los campos incluyéndolos JSON
   const estudiantes: EstudianteView[] = estudiantesRaw.map((e) => ({
     id: e.id,
-    carnet: e.carnet,
-    nombre_completo: e.nombre_completo,
-    email: e.email,
-    telefono: e.telefono,
-    matriculado: e.matriculado,
-    carrera: e.carrera,
-    facultad: e.facultad,
+    carnet: e.carnet ?? '',
+    nombre_completo: e.nombre_completo ?? '',
+    email: e.email ?? '',
+    telefono: e.telefono ?? '',
+    matriculado: Boolean(e.matriculado),
+    carrera: e.carrera ?? '',
+    facultad: e.facultad ?? '',
     beca: e.beca ?? null,
     promedio_notas:
       e.promedio_notas !== null ? Number(e.promedio_notas.toString()) : null,
     horas_beca_restantes: e.horas_beca_restantes ?? null,
-    // Prisma ’Json’ ya viene parseado, así que lo asumimos como array/objeto
-    cursos: e.cursos ?? null,
-    prestamos_activos: e.prestamos_activos ?? null,
+    cursos: Array.isArray(e.cursos) ? (e.cursos as number[]) : [],
+    prestamos_activos: Array.isArray(e.prestamos_activos)
+      ? (e.prestamos_activos as number[])
+      : [],
   }));
 
   return (

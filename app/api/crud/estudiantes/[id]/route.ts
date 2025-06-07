@@ -6,7 +6,7 @@ export async function GET(
   _req: Request,
   { params }: { params: { id: string } },
 ) {
-  const est = await prisma.vistaEstudiantes.findUnique({
+  const est = await prisma.vista_estudiantes.findUnique({
     where: { id: Number(params.id) },
   });
   if (!est) return NextResponse.json({ error: 'No existe' }, { status: 404 });
