@@ -56,7 +56,31 @@ DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/proyecto4"
 
 Una vez configurado el entorno, seguí estos pasos para iniciar el servidor de desarrollo y preparar la base de datos:
 
-Iniciá el servidor de desarrollo de Next.js:
+1. Generar el cliente de Prisma
+
+```
+npx prisma generate
+```
+
+2. Aplicar migraciones existentes
+
+```
+npx prisma migrate deploy
+```
+
+3. Aplicar funciones, triggers y vistas
+
+```
+npm run db:apply
+```
+
+4. Cargar datos de ejemplo
+
+```
+npm run seed
+```
+
+5. Iniciá el servidor de desarrollo de Next.js:
 
 ```
 npm run dev
@@ -68,62 +92,6 @@ El proyecto estará disponible en:
 http://localhost:3000
 ```
 
----
-
-## 🛠️ Migraciones de Base de Datos
-Este proyecto utiliza Prisma como ORM. A continuación los comandos para manejar migraciones:
-
-### Crear una nueva migración
-Después de hacer cambios en el esquema (`schema.prisma`), ejecutar:
-
-```
-npx prisma migrate dev --name nombre_descriptivo_de_la_migracion 
-```
-
-### Aplicar migraciones en producción
-
-```
-npx prisma migrate deploy
-```
-
-### Generar el cliente de Prisma
-
-```
-npx prisma generate
-```
----
-
-## 🌱 Cargar datos de ejemplo (seed.ts)
-
-Este proyecto incluye un script de seeding para poblar la base de datos con datos de prueba realistas. Ideal para pruebas y demostraciones.
-
-### 🔧 Paso 1: Instalar dependencias necesarias
-
-Asegúrate de tener instalados los siguientes paquetes:
-
-```
-npm install @faker-js/faker
-```
-
-### Ejecutar migraciones 
-```
-npx prisma migrate dev
-```
-
-### Ejecutar el archivo seed.ts 
-```
-npm run seed
-```
-
-### Ver datos
-```
-npx prisma studio
-```
-
-### Nota: Si se desea resetear 
-```
-npx prisma migrate reset
-```
 
 
 ---
