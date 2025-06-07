@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import EstudiantesTable, {
   EstudianteView,
 } from '@/components/crud/estudiantes/EstudiantesTable';
+import { Plus } from 'lucide-react';
 
 export default async function EstudiantesIndex() {
   // (1) Traer los datos “crudos” de la vista
@@ -31,40 +32,23 @@ export default async function EstudiantesIndex() {
   }));
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-6 py-6">
-          <h1 className="text-2xl font-semibold text-gray-800">Estudiantes</h1>
+    <div className="min-h-screen bg-gray-100 py-10">
+      <div className="mx-auto max-w-6xl rounded-lg bg-white p-8 shadow-xl">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Listado de Estudiantes
+          </h1>
+          <Link
+            href="/crud/estudiantes/create"
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
+          >
+            <Plus className="h-5 w-5" />
+            <span>Nuevo Estudiante</span>
+          </Link>
         </div>
-      </header>
 
-      {/* Content */}
-      <main className="mx-auto max-w-7xl flex-grow px-6 py-8">
-        <div className="rounded-lg bg-white p-6 shadow">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-medium text-gray-700">
-              Listado de Estudiantes
-            </h2>
-            <Link
-              href="/crud/estudiantes/create"
-              className="inline-flex items-center gap-1 rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              + Nuevo Estudiante
-            </Link>
-          </div>
-          <div className="overflow-auto">
-            <EstudiantesTable data={estudiantes} />
-          </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-white">
-        <div className="mx-auto max-w-7xl px-6 py-4 text-center text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} CC3088.
-        </div>
-      </footer>
+        <EstudiantesTable data={estudiantes} />
+      </div>
     </div>
   );
 }

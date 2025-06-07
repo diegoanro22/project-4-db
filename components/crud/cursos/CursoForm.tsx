@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Save, ArrowLeft } from 'lucide-react';
 
 type Mode = 'create' | 'edit';
 
@@ -66,84 +67,124 @@ export default function CursoForm({ mode, id, initial }: CursoFormProps) {
   }
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
-      {/* Nombre */}
-      <div className="space-y-1">
-        <label className="font-medium">Nombre del curso</label>
-        <input
-          name="curso"
-          value={form.curso}
-          onChange={handleChange}
-          required
-          className="w-full rounded border p-2"
-          placeholder="Nombre del curso"
-        />
+    <form
+      onSubmit={(e) => void handleSubmit(e)}
+      className="space-y-6 rounded-lg bg-gray-50 p-6 shadow-md"
+    >
+      <div className="mb-4 flex items-center">
+        <button
+          type="button"
+          onClick={() => router.push('/crud/cursos')}
+          className="flex items-center text-gray-600 hover:text-gray-800"
+        >
+          <ArrowLeft className="h-5 w-5" />
+          <span className="ml-2">Volver</span>
+        </button>
       </div>
-
-      {/* Descripción */}
-      <div className="space-y-1">
-        <label className="font-medium">Descripción</label>
-        <textarea
-          name="descripcion"
-          value={form.descripcion}
-          onChange={handleChange}
-          required
-          className="min-h-[80px] w-full rounded border p-2"
-          placeholder="Descripción"
-        />
-      </div>
-
-      {/* Créditos y Categoría en dos columnas */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-4">
         <div className="space-y-1">
-          <label className="font-medium">Créditos</label>
+          <label htmlFor="curso" className="text-sm font-medium text-gray-700">
+            Nombre del curso
+          </label>
           <input
-            type="number"
-            name="creditos"
-            min={1}
-            value={form.creditos}
+            id="curso"
+            name="curso"
+            value={form.curso}
             onChange={handleChange}
             required
-            className="w-full rounded border p-2"
+            className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+            placeholder="Nombre del curso"
           />
         </div>
-
         <div className="space-y-1">
-          <label className="font-medium">Categoría</label>
-          <select
-            name="categoria"
-            value={form.categoria}
-            onChange={handleChange}
-            className="w-full rounded border p-2"
+          <label
+            htmlFor="descripcion"
+            className="text-sm font-medium text-gray-700"
           >
-            {['BASICO', 'INTERMEDIO', 'AVANZADO', 'ESPECIALIZADO'].map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
+            Descripción
+          </label>
+          <textarea
+            id="descripcion"
+            name="descripcion"
+            value={form.descripcion}
+            onChange={handleChange}
+            required
+            className="min-h-[100px] w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+            placeholder="Descripción"
+          />
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-1">
+            <label
+              htmlFor="creditos"
+              className="text-sm font-medium text-gray-700"
+            >
+              Créditos
+            </label>
+            <input
+              id="creditos"
+              type="number"
+              name="creditos"
+              min={1}
+              value={form.creditos}
+              onChange={handleChange}
+              required
+              className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          <div className="space-y-1">
+            <label
+              htmlFor="categoria"
+              className="text-sm font-medium text-gray-700"
+            >
+              Categoría
+            </label>
+            <select
+              id="categoria"
+              name="categoria"
+              value={form.categoria}
+              onChange={handleChange}
+              className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+            >
+              {['BASICO', 'INTERMEDIO', 'AVANZADO', 'ESPECIALIZADO'].map(
+                (c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ),
+              )}
+            </select>
+          </div>
+        </div>
+        <div className="space-y-1">
+          <label htmlFor="precio" className="text-sm font-medium text-gray-700">
+            Precio (Q)
+          </label>
+          <input
+            id="precio"
+            type="number"
+            step="0.01"
+            name="precio"
+            value={form.precio}
+            onChange={handleChange}
+            className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+          />
         </div>
       </div>
-
-      {/* Precio */}
-      <div className="space-y-1">
-        <label className="font-medium">Precio (Q)</label>
-        <input
-          type="number"
-          step="0.01"
-          name="precio"
-          value={form.precio}
-          onChange={handleChange}
-          className="w-full rounded border p-2"
-        />
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={loading}
+          className="inline-flex items-center gap-2"
+        >
+          <Save className="h-5 w-5" />
+          {loading
+            ? 'Guardando...'
+            : mode === 'create'
+              ? 'Crear'
+              : 'Actualizar'}
+        </button>
       </div>
-
-      <button
-        disabled={loading}
-        className="rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
-      >
-        {loading ? 'Guardando…' : mode === 'create' ? 'Crear' : 'Actualizar'}
-      </button>
     </form>
   );
 }

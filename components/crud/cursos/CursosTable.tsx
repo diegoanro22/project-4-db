@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
+import { Eye, Edit2, Trash2 } from 'lucide-react';
 /* ----------  Tipo que mapeamos desde prisma.vistaCursos ---------- */
 
 type Horario = {
@@ -73,61 +73,67 @@ export default function CursosTable({ data }: Props) {
   })();
 
   return (
-    <div>
-      <div className="overflow-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="border px-3 py-2">ID</th>
-              <th className="border px-3 py-2">Curso</th>
-              <th className="border px-3 py-2">Créditos</th>
-              <th className="border px-3 py-2">Categoría</th>
-              <th className="border px-3 py-2">Precio</th>
-              <th className="border px-3 py-2">Cantidad Secciones</th>
-              <th className="border px-3 py-2">Acciones</th>
+    <div className="overflow-hidden rounded-lg bg-white shadow-lg">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              {[
+                'Acciones',
+                'ID',
+                'Curso',
+                'Créditos',
+                'Categoría',
+                'Precio',
+                'Secciones',
+              ].map((h) => (
+                <th
+                  key={h}
+                  className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase"
+                >
+                  {h}
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200 bg-white">
             {current.map((c) => (
-              <tr key={c.id} className="text-sm hover:bg-gray-50">
-                <td className="border px-3 py-1">{c.id}</td>
-                <td className="border px-3 py-1">{c.curso}</td>
-                <td className="border px-3 py-1">{c.creditos}</td>
-                <td className="border px-3 py-1">{c.categoria}</td>
-                <td className="border px-3 py-1">Q {c.precio.toFixed(2)}</td>
-                <td className="border px-3 py-1">
-                  {Array.isArray(c.secciones) ? c.secciones.length : 0}
-                </td>
-                <td className="border px-3 py-1">
-                  <div className="flex space-x-2">
-                    <Link
-                      href={`/crud/cursos/${c.id}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Ver
+              <tr key={c.id} className="hover:bg-gray-50">
+                <td className="px-4 py-2">
+                  <div className="flex gap-2">
+                    <Link href={`/crud/cursos/${c.id}`}>
+                      <button className="rounded p-1 hover:bg-gray-100">
+                        <Eye className="h-5 w-5 text-blue-500" />
+                      </button>
                     </Link>
-                    <Link
-                      href={`/crud/cursos/${c.id}/edit`}
-                      className="text-green-600 hover:underline"
-                    >
-                      Editar
+                    <Link href={`/crud/cursos/${c.id}/edit`}>
+                      <button className="rounded p-1 hover:bg-gray-100">
+                        <Edit2 className="h-5 w-5 text-green-500" />
+                      </button>
                     </Link>
                     <button
                       onClick={() => void handleDelete(c.id, c.curso)}
-                      className="text-red-600 hover:underline"
+                      className="rounded p-1 hover:bg-gray-100"
                     >
-                      Eliminar
+                      <Trash2 className="h-5 w-5 text-red-500" />
                     </button>
                   </div>
+                </td>
+                <td className="px-4 py-2 text-gray-600">{c.id}</td>
+                <td className="px-4 py-2 text-gray-600">{c.curso}</td>
+                <td className="px-4 py-2 text-gray-600">{c.creditos}</td>
+                <td className="px-4 py-2 text-gray-600">{c.categoria}</td>
+                <td className="px-4 py-2 text-gray-600">
+                  Q {c.precio.toFixed(2)}
+                </td>
+                <td className="px-4 py-2 text-gray-600">
+                  {Array.isArray(c.secciones) ? c.secciones.length : 0}
                 </td>
               </tr>
             ))}
             {current.length === 0 && (
               <tr>
-                <td
-                  colSpan={7}
-                  className="border py-6 text-center text-gray-500"
-                >
+                <td colSpan={7} className="px-4 py-6 text-center text-gray-500">
                   No hay cursos registrados.
                 </td>
               </tr>
@@ -135,43 +141,39 @@ export default function CursosTable({ data }: Props) {
           </tbody>
         </table>
       </div>
-
-      {/* controles de paginación */}
-      <div className="mt-4 flex items-center justify-between">
-        <div>
-          <select
-            className="rounded border px-2 py-1"
-            value={itemsPerPage}
-            onChange={(e) => {
-              setItemsPerPage(Number(e.target.value));
-              setCurrentPage(1);
-            }}
-          >
-            {[5, 10, 20, 50].map((n) => (
-              <option key={n} value={n}>
-                {n} / página
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="flex items-center justify-between bg-gray-50 px-4 py-3">
+        <select
+          className="rounded border-gray-300 p-2 text-sm"
+          value={itemsPerPage}
+          onChange={(e) => {
+            setItemsPerPage(Number(e.target.value));
+            setCurrentPage(1);
+          }}
+        >
+          {[5, 10, 20, 50].map((n) => (
+            <option key={n} value={n}>
+              {n} / pág
+            </option>
+          ))}
+        </select>
         <div className="flex items-center space-x-1">
           <button
             onClick={() => go(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`rounded border px-3 py-1 ${currentPage === 1 ? 'bg-gray-200 text-gray-500' : 'bg-white hover:bg-gray-100'}`}
+            className="rounded border px-2 py-1 text-sm disabled:opacity-50"
           >
             ‹
           </button>
           {pages.map((p, i) =>
             p === '…' ? (
-              <span key={'e' + i} className="px-2">
+              <span key={i} className="px-2 text-gray-500">
                 …
               </span>
             ) : (
               <button
                 key={p}
                 onClick={() => go(p as number)}
-                className={`rounded border px-3 py-1 ${p === currentPage ? 'bg-blue-600 text-white' : 'bg-white hover:bg-gray-100'}`}
+                className={`rounded px-3 py-1 text-sm ${p === currentPage ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'}`}
               >
                 {p}
               </button>
@@ -180,7 +182,7 @@ export default function CursosTable({ data }: Props) {
           <button
             onClick={() => go(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`rounded border px-3 py-1 ${currentPage === totalPages ? 'bg-gray-200 text-gray-500' : 'bg-white hover:bg-gray-100'}`}
+            className="rounded border px-2 py-1 text-sm disabled:opacity-50"
           >
             ›
           </button>

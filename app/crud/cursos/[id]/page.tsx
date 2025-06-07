@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Prisma } from '@prisma/client';
+import { Edit2, ChevronLeft } from 'lucide-react';
 
 type Horario = {
   dia: string;
@@ -37,57 +38,76 @@ export default async function ShowCurso({
 
   /* -------- render -------- */
   return (
-    <div className="mx-auto my-10 max-w-4xl rounded bg-white p-6 shadow">
-      <h1 className="mb-4 text-2xl font-bold">{raw.curso}</h1>
-      <p className="mb-4 text-gray-700">{raw.descripcion}</p>
-
-      <ul className="space-y-1 text-sm">
-        <li>
-          <b>Créditos:</b> {raw.creditos}
-        </li>
-        <li>
-          <b>Categoría:</b> {raw.categoria}
-        </li>
-        <li>
-          <b>Precio:</b> Q&nbsp;{precio}
-        </li>
-        <li>
-          <b>Secciones activas:</b> {secciones.length}
-        </li>
-      </ul>
-
-      {/* Tabla de secciones */}
+    <div className="mx-auto my-12 max-w-4xl rounded-lg bg-white p-8 shadow-xl">
+      <div className="mb-6 flex items-center justify-between">
+        <Link
+          href="/crud/cursos"
+          className="flex items-center text-gray-600 hover:text-gray-800"
+        >
+          <ChevronLeft className="h-5 w-5" />
+          <span className="ml-2">Volver</span>
+        </Link>
+        <Link
+          href={`/crud/cursos/${raw.id}/edit`}
+          className="flex items-center rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+        >
+          <Edit2 className="mr-2 h-5 w-5" />
+          <span>Editar</span>
+        </Link>
+      </div>
+      <h1 className="mb-4 text-3xl font-bold text-gray-800">{raw.curso}</h1>
+      <p className="mb-6 text-gray-700">{raw.descripcion}</p>
+      <div className="mb-6 grid grid-cols-1 gap-6 text-gray-800 sm:grid-cols-2">
+        <div>
+          <span className="font-medium">Créditos:</span> {raw.creditos}
+        </div>
+        <div>
+          <span className="font-medium">Categoría:</span> {raw.categoria}
+        </div>
+        <div>
+          <span className="font-medium">Precio:</span> Q {precio}
+        </div>
+        <div>
+          <span className="font-medium">Secciones:</span> {secciones.length}
+        </div>
+      </div>
       {secciones.length > 0 && (
-        <div className="mt-6 overflow-auto">
-          <table className="min-w-full border-collapse text-sm">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border px-3 py-1">ID</th>
-                <th className="border px-3 py-1">Maestro</th>
-                <th className="border px-3 py-1">Salón</th>
-                <th className="border px-3 py-1">Capacidad</th>
-                <th className="border px-3 py-1">Est. inscritos</th>
-                <th className="border px-3 py-1">Horarios</th>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                {[
+                  'ID',
+                  'Maestro',
+                  'Salón',
+                  'Capacidad',
+                  'Inscritos',
+                  'Horario',
+                ].map((head) => (
+                  <th
+                    key={head}
+                    className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase"
+                  >
+                    {head}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-200 bg-white">
               {secciones.map((s) => (
-                <tr key={s.id}>
-                  <td className="border px-3 py-1">{s.id}</td>
-                  <td className="border px-3 py-1">{s.maestro}</td>
-                  <td className="border px-3 py-1">{s.salon}</td>
-                  <td className="border px-3 py-1">{s.capacidad}</td>
-                  <td className="border px-3 py-1">
+                <tr key={s.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-2 text-gray-600">{s.id}</td>
+                  <td className="px-4 py-2 text-gray-600">{s.maestro}</td>
+                  <td className="px-4 py-2 text-gray-600">{s.salon}</td>
+                  <td className="px-4 py-2 text-gray-600">{s.capacidad}</td>
+                  <td className="px-4 py-2 text-gray-600">
                     {s.estudiantes_inscritos}
                   </td>
-                  <td className="border px-3 py-1">
+                  <td className="px-4 py-2 text-gray-600">
                     {s.horario
                       .map(
                         (h) =>
-                          `${h.dia}: ${h.hora_inicio.slice(
-                            0,
-                            5,
-                          )}-${h.hora_fin.slice(0, 5)}`,
+                          `${h.dia} ${h.hora_inicio.slice(0, 5)}-${h.hora_fin.slice(0, 5)}`,
                       )
                       .join(', ')}
                   </td>
@@ -97,21 +117,6 @@ export default async function ShowCurso({
           </table>
         </div>
       )}
-
-      <div className="mt-6 space-x-3">
-        <Link
-          href={`/crud/cursos/${raw.id}/edit`}
-          className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-        >
-          Editar
-        </Link>
-        <Link
-          href="/crud/cursos"
-          className="rounded bg-gray-300 px-4 py-2 hover:bg-gray-400"
-        >
-          Volver
-        </Link>
-      </div>
     </div>
   );
 }

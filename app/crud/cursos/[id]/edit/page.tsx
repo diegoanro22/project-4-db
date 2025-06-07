@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import CursoForm from '@/components/crud/cursos/CursoForm';
 import { notFound } from 'next/navigation';
+import { ChevronLeft } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function EditCurso({
   params,
@@ -13,8 +15,19 @@ export default async function EditCurso({
   if (!c) return notFound();
 
   return (
-    <div className="mx-auto my-10 max-w-xl rounded bg-white p-6 shadow">
-      <h1 className="mb-4 text-2xl font-bold">Editar curso</h1>
+    <div className="mx-auto my-12 max-w-3xl rounded-lg bg-white p-8 shadow-xl">
+      <div className="mb-6 flex items-center">
+        <Link
+          href="/crud/cursos"
+          className="flex items-center text-gray-600 hover:text-gray-800"
+        >
+          <ChevronLeft className="h-5 w-5" />
+          <span className="ml-2">Volver</span>
+        </Link>
+        <h1 className="ml-auto text-2xl font-semibold text-gray-800">
+          Editar Curso
+        </h1>
+      </div>
       <CursoForm
         mode="edit"
         id={c.id}
