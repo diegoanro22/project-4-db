@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Save, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 /* --- catálogos que enviamos desde la page server --- */
 export interface SelItem {
@@ -92,91 +94,137 @@ export default function PrestamoForm({
   }
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
-      {/* Item */}
-      <div className="space-y-1">
-        <label className="font-medium">Item</label>
-        <select
-          name="item_id"
-          value={form.item_id}
-          onChange={handleChange}
-          className="w-full rounded border p-2"
+    <form
+      onSubmit={(e) => void handleSubmit(e)}
+      className="space-y-6 rounded-lg bg-gray-50 p-6 shadow-md"
+    >
+      <div className="mb-4 flex items-center">
+        <Link
+          href="/crud/prestamos"
+          className="flex items-center text-gray-600 hover:text-gray-800"
         >
-          {items.map((it) => (
-            <option
-              key={it.id}
-              value={it.id}
-              disabled={!it.disponible && mode === 'create'}
-            >
-              {it.label}
-              {!it.disponible && mode === 'create' ? ' (ocupado)' : ''}
-            </option>
-          ))}
-        </select>
+          <ArrowLeft className="h-5 w-5" />
+          <span className="ml-2">Volver</span>
+        </Link>
       </div>
-
-      {/* Estudiante */}
-      <div className="space-y-1">
-        <label className="font-medium">Estudiante</label>
-        <select
-          name="estudiante_id"
-          value={form.estudiante_id}
-          onChange={handleChange}
-          className="w-full rounded border p-2"
-        >
-          {estudiantes.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Estado + fechas */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="space-y-4">
         <div className="space-y-1">
-          <label className="font-medium">Estado</label>
-          <select
-            name="estado"
-            value={form.estado}
-            onChange={handleChange}
-            className="w-full rounded border p-2"
+          <label
+            htmlFor="item_id"
+            className="text-sm font-medium text-gray-700"
           >
-            {['ACTIVO', 'DEVUELTO', 'VENCIDO', 'PERDIDO'].map((e) => (
-              <option key={e} value={e}>
-                {e}
+            Item
+          </label>
+          <select
+            id="item_id"
+            name="item_id"
+            value={form.item_id}
+            onChange={handleChange}
+            className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+          >
+            {items.map((it) => (
+              <option
+                key={it.id}
+                value={it.id}
+                disabled={!it.disponible && mode === 'create'}
+              >
+                {it.label}
+                {!it.disponible && mode === 'create' ? ' (ocupado)' : ''}
               </option>
             ))}
           </select>
         </div>
         <div className="space-y-1">
-          <label className="font-medium">Fecha préstamo</label>
-          <input
-            type="date"
-            name="fecha_prestamo"
-            value={form.fecha_prestamo}
+          <label
+            htmlFor="estudiante_id"
+            className="text-sm font-medium text-gray-700"
+          >
+            Estudiante
+          </label>
+          <select
+            id="estudiante_id"
+            name="estudiante_id"
+            value={form.estudiante_id}
             onChange={handleChange}
-            className="w-full rounded border p-2"
-          />
+            className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+          >
+            {estudiantes.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
+          </select>
         </div>
-        <div className="space-y-1">
-          <label className="font-medium">Fecha devolución</label>
-          <input
-            type="date"
-            name="fecha_devolucion"
-            value={form.fecha_devolucion ?? ''}
-            onChange={handleChange}
-            className="w-full rounded border p-2"
-          />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="space-y-1">
+            <label
+              htmlFor="estado"
+              className="text-sm font-medium text-gray-700"
+            >
+              Estado
+            </label>
+            <select
+              id="estado"
+              name="estado"
+              value={form.estado}
+              onChange={handleChange}
+              className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+            >
+              {['ACTIVO', 'DEVUELTO', 'VENCIDO', 'PERDIDO'].map((e) => (
+                <option key={e} value={e}>
+                  {e}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label
+              htmlFor="fecha_prestamo"
+              className="text-sm font-medium text-gray-700"
+            >
+              Fecha préstamo
+            </label>
+            <input
+              id="fecha_prestamo"
+              type="date"
+              name="fecha_prestamo"
+              value={form.fecha_prestamo}
+              onChange={handleChange}
+              className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          <div className="space-y-1">
+            <label
+              htmlFor="fecha_devolucion"
+              className="text-sm font-medium text-gray-700"
+            >
+              Fecha devolución
+            </label>
+            <input
+              id="fecha_devolucion"
+              type="date"
+              name="fecha_devolucion"
+              value={form.fecha_devolucion ?? ''}
+              onChange={handleChange}
+              className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
         </div>
       </div>
-
-      <button
-        disabled={loading}
-        className="rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
-      >
-        {loading ? 'Guardando…' : mode === 'create' ? 'Crear' : 'Actualizar'}
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          <Save className="h-5 w-5" />
+          {loading
+            ? 'Guardando...'
+            : mode === 'create'
+              ? 'Crear'
+              : 'Actualizar'}
+        </button>
+      </div>
     </form>
   );
 }

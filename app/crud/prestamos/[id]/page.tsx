@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Edit2, ChevronLeft } from 'lucide-react';
 
 export default async function ShowPrestamo({
   params,
@@ -18,62 +19,64 @@ export default async function ShowPrestamo({
     : '—';
 
   return (
-    <div className="mx-auto my-10 max-w-3xl rounded bg-white p-6 shadow">
-      <h1 className="mb-4 text-2xl font-bold">Préstamo #{p.id}</h1>
+    <div className="mx-auto my-12 max-w-3xl rounded-lg bg-white p-8 shadow-xl">
+      <div className="mb-6 flex items-center justify-between">
+        <Link
+          href="/crud/prestamos"
+          className="flex items-center text-gray-600 hover:text-gray-800"
+        >
+          <ChevronLeft className="h-5 w-5" />
+          <span className="ml-2">Volver</span>
+        </Link>
+        <Link
+          href={`/crud/prestamos/${p.id}/edit`}
+          className="flex items-center rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+        >
+          <Edit2 className="mr-2 h-5 w-5" />
+          <span>Editar</span>
+        </Link>
+      </div>
 
-      <ul className="space-y-1 text-sm">
+      <h1 className="mb-6 text-3xl font-bold text-gray-800">
+        Préstamo #{p.id}
+      </h1>
+      <ul className="grid grid-cols-1 gap-4 text-gray-700 sm:grid-cols-2">
         <li>
-          <b>Estado:</b> {p.estado}
+          <span className="font-medium">Estado:</span> {p.estado}
         </li>
         <li>
-          <b>Fecha préstamo:</b> {fechaPrestamo}
+          <span className="font-medium">Fecha préstamo:</span> {fechaPrestamo}
         </li>
         <li>
-          <b>Fecha devolución:</b> {fechaDevolucion}
+          <span className="font-medium">Fecha devolución:</span>{' '}
+          {fechaDevolucion}
         </li>
         <li>
-          <b>Item:</b> {p.item}
+          <span className="font-medium">Item:</span> {p.item}
         </li>
         <li>
-          <b>Tipo:</b> {p.tipo_item}
+          <span className="font-medium">Tipo:</span> {p.tipo_item}
         </li>
-
         {p.tipo_item === 'Libro' && (
           <>
             <li>
-              <b>Libro:</b> {p.libro}
+              <span className="font-medium">Libro:</span> {p.libro}
             </li>
             <li>
-              <b>Autor:</b> {p.autor_libro}
+              <span className="font-medium">Autor:</span> {p.autor_libro}
             </li>
           </>
         )}
-
         {p.tipo_item === 'Dispositivo' && (
           <li>
-            <b>Dispositivo:</b> {p.dispositivo}
+            <span className="font-medium">Dispositivo:</span> {p.dispositivo}
           </li>
         )}
-
-        <li>
-          <b>Estudiante:</b> {p.estudiante} ({p.carnet})
+        <li className="col-span-full">
+          <span className="font-medium">Estudiante:</span> {p.estudiante} (
+          {p.carnet})
         </li>
       </ul>
-
-      <div className="mt-6 space-x-3">
-        <Link
-          href={`/crud/prestamos/${p.id}/edit`}
-          className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-        >
-          Editar
-        </Link>
-        <Link
-          href="/crud/prestamos"
-          className="rounded bg-gray-300 px-4 py-2 hover:bg-gray-400"
-        >
-          Volver
-        </Link>
-      </div>
     </div>
   );
 }

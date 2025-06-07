@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import PrestamosTable, {
   PrestamoView,
 } from '@/components/crud/prestamos/PrestamosTable';
+import { Plus } from 'lucide-react';
 
 export default async function PrestamosIndex() {
   /* 1) Leemos la vista */
@@ -26,20 +27,22 @@ export default async function PrestamosIndex() {
   }));
 
   return (
-    <div className="min-h-screen bg-gray-200 py-10">
-      <div className="mx-auto max-w-6xl rounded-lg bg-gray-100 p-8 shadow-lg">
-        <h1 className="mb-6 text-3xl font-bold">Listado de Préstamos</h1>
-
-        <PrestamosTable data={data} />
-
-        <div className="mt-6">
+    <div className="min-h-screen bg-gray-100 py-10">
+      <div className="mx-auto max-w-6xl rounded-lg bg-white p-8 shadow-xl">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Listado de Préstamos
+          </h1>
           <Link
             href="/crud/prestamos/create"
-            className="inline-block rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
           >
-            + Nuevo Préstamo
+            <Plus className="h-5 w-5" />
+            <span>Nuevo Préstamo</span>
           </Link>
         </div>
+
+        <PrestamosTable data={data} />
       </div>
     </div>
   );

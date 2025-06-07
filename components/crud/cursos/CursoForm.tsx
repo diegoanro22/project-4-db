@@ -175,7 +175,7 @@ export default function CursoForm({ mode, id, initial }: CursoFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center gap-2"
+          className="flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
         >
           <Save className="h-5 w-5" />
           {loading

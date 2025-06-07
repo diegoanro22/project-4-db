@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Eye, Edit2, Trash2 } from 'lucide-react';
 
 export interface PrestamoView {
   id: number;
@@ -59,69 +60,67 @@ export default function PrestamosTable({ data }: Props) {
   })();
 
   return (
-    <div>
-      <div className="overflow-auto">
-        <table className="w-full border-collapse text-sm">
-          <thead>
-            <tr className="bg-gray-100">
+    <div className="overflow-hidden rounded-lg bg-white shadow-lg">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200 text-sm">
+          <thead className="bg-gray-50">
+            <tr>
               {[
+                'Acciones',
                 'ID',
                 'Estado',
                 'F. Préstamo',
-                'F. Devol.',
+                'F. Devolución',
                 'Item',
                 'Tipo',
                 'Estudiante',
-                'Acciones',
               ].map((h) => (
-                <th key={h} className="border px-3 py-2 text-left">
+                <th
+                  key={h}
+                  className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase"
+                >
                   {h}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200 bg-white">
             {slice.map((p) => (
               <tr key={p.id} className="hover:bg-gray-50">
-                <td className="border px-3 py-1">{p.id}</td>
-                <td className="border px-3 py-1">{p.estado}</td>
-                <td className="border px-3 py-1">{p.fecha_prestamo}</td>
-                <td className="border px-3 py-1">
-                  {p.fecha_devolucion ?? '—'}
-                </td>
-                <td className="border px-3 py-1">{p.item}</td>
-                <td className="border px-3 py-1">{p.tipo_item}</td>
-                <td className="border px-3 py-1">{p.estudiante}</td>
-                <td className="border px-3 py-1">
-                  <div className="flex space-x-2">
-                    <Link
-                      href={`/crud/prestamos/${p.id}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Ver
+                <td className="px-4 py-2">
+                  <div className="flex gap-2">
+                    <Link href={`/crud/prestamos/${p.id}`}>
+                      <button className="rounded p-1 hover:bg-gray-100">
+                        <Eye className="h-5 w-5 text-blue-500" />
+                      </button>
                     </Link>
-                    <Link
-                      href={`/crud/prestamos/${p.id}/edit`}
-                      className="text-green-600 hover:underline"
-                    >
-                      Editar
+                    <Link href={`/crud/prestamos/${p.id}/edit`}>
+                      <button className="rounded p-1 hover:bg-gray-100">
+                        <Edit2 className="h-5 w-5 text-green-500" />
+                      </button>
                     </Link>
                     <button
                       onClick={() => void handleDelete(p.id)}
-                      className="text-red-600 hover:underline"
+                      className="rounded p-1 hover:bg-gray-100"
                     >
-                      Eliminar
+                      <Trash2 className="h-5 w-5 text-red-500" />
                     </button>
                   </div>
                 </td>
+                <td className="px-4 py-2 text-gray-600">{p.id}</td>
+                <td className="px-4 py-2 text-gray-600">{p.estado}</td>
+                <td className="px-4 py-2 text-gray-600">{p.fecha_prestamo}</td>
+                <td className="px-4 py-2 text-gray-600">
+                  {p.fecha_devolucion ?? '—'}
+                </td>
+                <td className="px-4 py-2 text-gray-600">{p.item}</td>
+                <td className="px-4 py-2 text-gray-600">{p.tipo_item}</td>
+                <td className="px-4 py-2 text-gray-600">{p.estudiante}</td>
               </tr>
             ))}
             {slice.length === 0 && (
               <tr>
-                <td
-                  colSpan={8}
-                  className="border py-6 text-center text-gray-500"
-                >
+                <td colSpan={8} className="px-4 py-6 text-center text-gray-500">
                   No hay registros.
                 </td>
               </tr>
@@ -129,51 +128,52 @@ export default function PrestamosTable({ data }: Props) {
           </tbody>
         </table>
       </div>
-
-      {/* controles */}
-      <div className="mt-4 flex items-center justify-between">
+      <div className="flex items-center justify-between bg-gray-50 px-4 py-3">
         <select
-          className="rounded border px-2 py-1"
           value={perPage}
           onChange={(e) => {
             setPerPage(Number(e.target.value));
             setCurrent(1);
           }}
+          className="rounded border-gray-300 p-2 text-sm"
         >
           {[5, 10, 20, 50].map((n) => (
             <option key={n} value={n}>
-              {n} / pág.
+              {n} / pág
             </option>
           ))}
         </select>
-
         <div className="flex items-center space-x-1">
           <button
             onClick={() => go(current - 1)}
             disabled={current === 1}
-            className={`rounded border px-3 py-1 ${current === 1 ? 'bg-gray-200 text-gray-500' : 'hover:bg-gray-100'}`}
+            className="rounded border px-2 py-1 text-sm disabled:opacity-50"
           >
             ‹
           </button>
+
           {pageButtons.map((b, i) =>
             b === '…' ? (
-              <span key={i} className="px-2">
+              <span key={i} className="px-2 text-gray-500">
                 …
               </span>
             ) : (
               <button
                 key={b}
                 onClick={() => go(b as number)}
-                className={`rounded border px-3 py-1 ${b === current ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'}`}
+                className={`rounded px-3 py-1 text-sm ${
+                  b === current ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'
+                }`}
               >
                 {b}
               </button>
             ),
           )}
+
           <button
             onClick={() => go(current + 1)}
             disabled={current === pages}
-            className={`rounded border px-3 py-1 ${current === pages ? 'bg-gray-200 text-gray-500' : 'hover:bg-gray-100'}`}
+            className="rounded border px-2 py-1 text-sm disabled:opacity-50"
           >
             ›
           </button>

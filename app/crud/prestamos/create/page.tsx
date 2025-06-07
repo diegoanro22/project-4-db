@@ -3,6 +3,7 @@ import PrestamoForm, {
   SelStudent,
 } from '@/components/crud/prestamos/PrestamoForm';
 import { prisma } from '@/lib/prisma';
+import { PlusCircle } from 'lucide-react';
 
 export default async function CreatePrestamo() {
   /* items disponibles */
@@ -24,8 +25,13 @@ export default async function CreatePrestamo() {
   }));
 
   return (
-    <div className="mx-auto my-10 max-w-xl rounded bg-white p-6 shadow">
-      <h1 className="mb-4 text-2xl font-bold">Nuevo Préstamo</h1>
+    <div className="mx-auto my-12 max-w-3xl rounded-lg bg-white p-8 shadow-xl">
+      <div className="mb-6 flex items-center">
+        <PlusCircle className="h-6 w-6 text-blue-600" />
+        <h1 className="ml-3 text-2xl font-semibold text-gray-800">
+          Nuevo Préstamo
+        </h1>
+      </div>
       <PrestamoForm mode="create" items={items} estudiantes={estudiantes} />
     </div>
   );
