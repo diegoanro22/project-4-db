@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -388,4 +389,53 @@ model Reservas {
   estudiante       Estudiantes       @relation(fields: [estudiante_id], references: [id])
 
   @@map("reservas")
+}
+
+
+
+view vista_cursos {
+  id          Int @id
+  curso       String?         @db.VarChar(200)
+  descripcion String?
+  creditos    Int?
+  categoria   CursoCategoria?
+  precio      Decimal?        @db.Decimal(10, 2)
+  secciones   Json?           @db.Json
+
+
+}
+
+view vista_estudiantes {
+  id                   Int @id
+  carnet               String?  @db.VarChar(50)
+  nombre_completo      String?
+  email                String?  @db.VarChar(200)
+  telefono             String?  @db.VarChar(20)
+  matriculado          Boolean?
+  carrera              String?  @db.VarChar(200)
+  facultad             String?  @db.VarChar(200)
+  beca                 String?  @db.VarChar(100)
+  promedio_notas       Decimal? @db.Decimal
+  horas_beca_restantes Int?
+  cursos               Json?    @db.Json
+  prestamos_activos    Json?    @db.Json
+
+
+}
+
+
+view vista_prestamos {
+  id               Int  @id
+  estado           PrestamoEstado?
+  fecha_prestamo   DateTime?       @db.Date
+  fecha_devolucion DateTime?       @db.Date
+  item             String?         @db.VarChar(200)
+  tipo_item        String?
+  libro            String?         @db.VarChar(200)
+  autor_libro      String?         @db.VarChar(200)
+  a_o_publicacion  Int?            @map("año_publicacion")
+  dispositivo      String?         @db.VarChar(200)
+  estudiante       String?
+  carnet           String?         @db.VarChar(50)
+
 }

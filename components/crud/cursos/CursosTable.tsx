@@ -4,6 +4,22 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 /* ----------  Tipo que mapeamos desde prisma.vistaCursos ---------- */
+
+type Horario = {
+  dia: string;
+  hora_inicio: string; // ISO «HH:MM:SS»
+  hora_fin: string;
+};
+
+export type SeccionResumen = {
+  id: number;
+  maestro: string;
+  salon: string;
+  capacidad: number;
+  estudiantes_inscritos: number;
+  horario: Horario[];
+};
+
 export interface CursoView {
   id: number;
   curso: string;
@@ -11,7 +27,7 @@ export interface CursoView {
   creditos: number;
   categoria: string; // BASICO | INTERMEDIO | …
   precio: number; // convertido
-  secciones: { id: number }[] | null; // basta para contar
+  secciones: SeccionResumen[] | null; // basta para contar
 }
 
 interface Props {

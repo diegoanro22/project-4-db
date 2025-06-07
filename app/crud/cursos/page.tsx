@@ -8,21 +8,21 @@ import { Prisma } from '@prisma/client';
 
 export default async function CursosIndex() {
   /* 1) Leer vista y ordenar */
-  const raw = await prisma.vistaCursos.findMany({
+  const raw = await prisma.vista_cursos.findMany({
     orderBy: { id: 'asc' },
   });
 
   /* 2) Adaptar a la shape que usa <CursosTable> */
   const cursos: CursoView[] = raw.map((c) => ({
     id: c.id,
-    curso: c.curso,
-    descripcion: c.descripcion,
-    creditos: c.creditos,
-    categoria: c.categoria,
-    precio: Number((c.precio as Prisma.Decimal).toString()),
+    curso: c.curso ?? '–',
+    descripcion: c.descripcion ?? '',
+    creditos: c.creditos ?? 0,
+    categoria: c.categoria ?? 'BASICO',
+    precio: c.precio ? Number((c.precio as Prisma.Decimal).toString()) : 0,
     secciones: Array.isArray(c.secciones)
       ? (c.secciones as SeccionResumen[])
-      : null,
+      : [], // <-- más sencillo que null
   }));
 
   /* 3) Render */

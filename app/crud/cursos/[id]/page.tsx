@@ -24,7 +24,7 @@ export default async function ShowCurso({
   params: { id: string };
 }) {
   /* -------- leer la vista ---------- */
-  const raw = await prisma.vistaCursos.findUnique({
+  const raw = await prisma.vista_cursos.findUnique({
     where: { id: Number(params.id) },
   });
   if (!raw) return notFound();

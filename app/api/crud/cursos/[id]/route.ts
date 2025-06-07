@@ -5,7 +5,7 @@ export async function GET(
   _req: Request,
   { params }: { params: { id: string } },
 ) {
-  const c = await prisma.vistaCursos.findUnique({
+  const c = await prisma.vista_cursos.findUnique({
     where: { id: Number(params.id) },
   });
   return c
