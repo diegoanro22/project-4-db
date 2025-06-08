@@ -28,7 +28,7 @@ Sistema completo construido con **Next.js**, **Prisma** y **PostgreSQL**, utiliz
 1. Clona el repositorio
 
 ```
-git clone https://github.com/diegoanro22/proyecto-4-db.git
+git clone https://github.com/diegoanro22/project-4-db.git
 cd proyecto-4-db
 ```
 
@@ -91,8 +91,6 @@ El proyecto estará disponible en:
 ```
 http://localhost:3000
 ```
-
-
 
 ---
 
